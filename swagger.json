@@ -1,0 +1,557 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "DocEngage Vital API",
+        "description": "DocEngage provides various Restful API. API Key is required to call DocEngage API which can be obtained from the organization settings page in integration section. By using the DocEngage APIs, you agree to our API policy. We reserve the right to change this policy at any time with reasonable notice. Your continued use of the DocEngage APIs constitutes acceptance of any changes. You also agree to and are responsible for ensuring that you comply with the all terms and condition including fair usage limit agreed in earlier SaaS Agreement.",
+        "version": "1.2",
+        "termsOfService": "https://www.docengage.in/terms",
+        "contact": {
+            "name": "DocEngage Customer Success Team",
+            "email": "support@docengage.in",
+            "url": "https://www.docengage.in"
+        }
+    },
+    "host": "stage.docengage.in",
+    "schemes": [
+        "https"
+    ],
+    "securityDefinitions": {
+        "api_key": {
+            "type": "apiKey",
+            "in": "header",
+            "name": "api-key",
+            "description": "Requester Organization API Key"
+        },
+        "requester_id": {
+            "type": "apiKey",
+            "name": "requester_id",
+            "description": "Requester Universal Id",
+            "in": "query"
+        }
+    },
+    "basePath": "/api",
+    "produces": [
+        "application/json"
+    ],
+    "paths": {
+        "/providers/{uuid}": {
+            "get": {
+                "security": [
+                    {
+                        "api_key": []
+                    },
+                    {
+                        "requester_id": []
+                    }
+                ],
+                "summary": "Find Provider by UUID",
+                "description": "Identify provider using API key & provider login Id\n",
+                "operationId": "findProviderByUUID",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "Provider Universal Id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "Provider"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Provider Deatils",
+                        "examples": {
+                            "application/json": "{\n  \"uuid\": \"507f1f77bcf86cd799439011\",\n  \"name\": \"Dr. Satish Mahesh\",\n  \"gender\": \"Male\",\n  \"mobile\": \"7829629794\",\n  \"email\": \"care@docengage.in\",\n  \"avatar\": \"//s3-ap-southeast-1.amazonaws.com/de-providers/21349/Ahi.jpg\"\n}"
+                        },
+                        "schema": {
+                            "$ref": "#/definitions/Provider"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/patients": {
+            "get": {
+                "security": [
+                    {
+                        "api_key": []
+                    },
+                    {
+                        "requester_id": []
+                    }
+                ],
+                "summary": "Search Patients",
+                "description": "Search Patients based on either of these parameters - UUID, Local Id, Name, Email, Mobile Number. Provide as much information known to narrow the search, will return all patients when no search parameters are provided. Requester id will enforce access control policy based on role assigned to requester.\noperationId: findPatientBySearchStr\n",
+                "parameters": [
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "Patient email",
+                        "type": "string",
+                        "pattern": "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])"
+                    },
+                    {
+                        "name": "mobile",
+                        "in": "query",
+                        "description": "Patient mobile number",
+                        "type": "string",
+                        "pattern": "^(\\+91[\\-\\s]?)?[0]?(91)?[789]\\d{9}$"
+                    },
+                    {
+                        "name": "uuid",
+                        "in": "query",
+                        "description": "Patient Universal Id",
+                        "type": "string"
+                    },
+                    {
+                        "name": "local_id",
+                        "in": "query",
+                        "description": "Patient Local Id (MRN)",
+                        "type": "string"
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "Patient Name",
+                        "type": "string"
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number (15 records per page)",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "tags": [
+                    "Patient"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of Patients",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Patient"
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/patients/{uuid}": {
+            "get": {
+                "security": [
+                    {
+                        "api_key": []
+                    },
+                    {
+                        "requester_id": []
+                    }
+                ],
+                "summary": "Get Patient Info",
+                "description": "Patient details for a given patient id\n",
+                "operationId": "findPatientByUUID",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "Patient Universal Id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "Patient"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Patient Deatils",
+                        "schema": {
+                            "$ref": "#/definitions/Patient"
+                        },
+                        "examples": {
+                            "application/json": "{\n  \"uuid\": \"8000197431\",\n  \"mobile\": \"9856874321\",\n  \"email\": \"arkapravo.mahapatra@docengage.in\",\n  \"avatar\": \"https://www.gravatar.com/avatar/9c730cc8bc25c1c60c92bdddfa565f82?r=pg&d=identicon\",\n  \"age\": \"21 years\",\n  \"name\": \"Arka Mukherjee\",\n  \"local_id\": \"JH01011\"\n}"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/vitals/{uuid}": {
+            "get": {
+                "security": [
+                    {
+                        "api_key": []
+                    },
+                    {
+                        "requester_id": []
+                    }
+                ],
+                "summary": "Get latest patient vitals",
+                "description": "Get Patient Vitals - limits the result to last 3 to 5 recordings\n",
+                "operationId": "getVitalsByPatientUUID",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "Patient Universal Id",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "vital_name",
+                        "in": "query",
+                        "enum": [
+                            "systolic",
+                            "diastolic",
+                            "spo2",
+                            "pulse_rate",
+                            "temp",
+                            "bgl",
+                            "chol_level",
+                            "rbc_count",
+                            "height",
+                            "weight",
+                            "heart_rate",
+                            "pain_level"
+                        ],
+                        "description": "Vital name (e.g. height)",
+                        "type": "string"
+                    },
+                    {
+                        "name": "enable_folding",
+                        "in": "query",
+                        "description": "Group vital based on session id, ignore when vital_name is specified.",
+                        "type": "boolean",
+                        "default": true
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number (15 records per page)",
+                        "type": "integer",
+                        "default": 1
+                    }
+                ],
+                "tags": [
+                    "Vitals"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of recent vitals",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Vital"
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "api_key": []
+                    },
+                    {
+                        "requester_id": []
+                    }
+                ],
+                "summary": "Add Vitals",
+                "description": "Submit one or more vitals signs\n",
+                "operationId": "addVitals",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "Patient Universal Id",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Add a list of vital signs",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/NewVital"
+                            },
+                            "example": "[\n  { \"name\":\"height\", \"value\":100, \"scale\":\"CM\", \"prediction\":\"High\",\"recorded_time\":1484563851207},\n  { \"name\":\"weight\", \"value\":\"120\", \"scale\":\"KG\", \"prediction\":\"High\",  \"recorded_time\":1484563851207},\n  { \"name\":\"systolic\", \"value\":120, \"scale\":\"MMHG\", \"prediction\":\"High\",  \"recorded_time\":1484563851207},\n  { \"name\":\"diastolic\", \"value\":120, \"scale\":\"MMHG\", \"prediction\":\"High\",  \"recorded_time\":1484563851207},\n  { \"name\":\"temp\", \"value\":99.2, \"scale\":\"C\", \"prediction\":\"High\",  \"recorded_time\":1484563851207}\n]"
+                        }
+                    }
+                ],
+                "tags": [
+                    "Vitals"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Status - Success/Failure"
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "Provider": {
+            "type": "object",
+            "properties": {
+                "login_id": {
+                    "type": "string",
+                    "description": "Provider Login Id (email)"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Provider Name"
+                },
+                "mobile": {
+                    "type": "string",
+                    "description": "Provider Mobile Number"
+                },
+                "email": {
+                    "type": "string",
+                    "description": "Provider Email"
+                },
+                "gender": {
+                    "type": "string",
+                    "description": "Provider Gender"
+                },
+                "avatar": {
+                    "type": "string",
+                    "description": "Provider Avatar (Provider Profile Picture)"
+                }
+            }
+        },
+        "Patient": {
+            "type": "object",
+            "properties": {
+                "uuid": {
+                    "type": "string",
+                    "description": "Patient Universal Id"
+                },
+                "local_id": {
+                    "type": "string",
+                    "description": "Patient Local Id (MRN)"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Patient Name"
+                },
+                "mobile": {
+                    "type": "string",
+                    "description": "Patient Mobile Number"
+                },
+                "email": {
+                    "type": "string",
+                    "description": "Patient Email"
+                },
+                "age": {
+                    "type": "string",
+                    "description": "Patient Ahe"
+                },
+                "gender": {
+                    "type": "string",
+                    "description": "Patient Gender"
+                },
+                "avatar": {
+                    "type": "string",
+                    "description": "Patient Avatar (Patient Profile Picture)"
+                }
+            }
+        },
+        "Vital": {
+            "type": "object",
+            "properties": {
+                "uuid": {
+                    "type": "string",
+                    "description": "Patient Universal Id"
+                },
+                "name": {
+                    "type": "string",
+                    "enum": [
+                        "systolic",
+                        "diastolic",
+                        "spo2",
+                        "pulse_rate",
+                        "temp",
+                        "bgl",
+                        "chol_level",
+                        "rbc_count",
+                        "height",
+                        "weight",
+                        "heart_rate",
+                        "pain_level"
+                    ],
+                    "default": "temp",
+                    "description": "Name of the vital e.g height"
+                },
+                "value": {
+                    "type": "number",
+                    "description": "Measuring value"
+                },
+                "scale": {
+                    "type": "string",
+                    "enum": [
+                        "MMHG",
+                        "BPM",
+                        "C",
+                        "F",
+                        "MG/DL",
+                        "MMOL/L",
+                        "CELLS",
+                        "LITER",
+                        "CM",
+                        "MET",
+                        "INCH",
+                        "KG",
+                        "LBS"
+                    ],
+                    "description": "Scale or unit of the measure",
+                    "default": "C"
+                },
+                "prediction": {
+                    "type": "string",
+                    "description": "High, Normal, Low",
+                    "enum": [
+                        "High",
+                        "Normal",
+                        "Low"
+                    ],
+                    "default": "Normal"
+                },
+                "note": {
+                    "type": "string",
+                    "description": "Note for this vital"
+                },
+                "recorded_at": {
+                    "type": "string",
+                    "description": "User defined String"
+                },
+                "recorded_time": {
+                    "type": "integer",
+                    "format": "int64",
+                    "description": "Time recorded in milliseconds"
+                }
+            }
+        },
+        "NewVital": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "enum": [
+                        "systolic",
+                        "diastolic",
+                        "spo2",
+                        "pulse_rate",
+                        "temp",
+                        "bgl",
+                        "chol_level",
+                        "rbc_count",
+                        "height",
+                        "weight",
+                        "heart_rate",
+                        "pain_level"
+                    ],
+                    "default": "temp",
+                    "description": "Name of the vital e.g height"
+                },
+                "value": {
+                    "type": "number",
+                    "description": "Measuring value"
+                },
+                "scale": {
+                    "type": "string",
+                    "enum": [
+                        "MMHG",
+                        "BPM",
+                        "C",
+                        "F",
+                        "MG/DL",
+                        "MMOL/L",
+                        "CELLS",
+                        "LITER",
+                        "CM",
+                        "MET",
+                        "INCH",
+                        "KG",
+                        "LBS"
+                    ],
+                    "description": "Scale or unit of the measure",
+                    "default": "C"
+                },
+                "prediction": {
+                    "type": "string",
+                    "description": "High, Normal, Low",
+                    "enum": [
+                        "High",
+                        "Normal",
+                        "Low"
+                    ],
+                    "default": "Normal"
+                },
+                "note": {
+                    "type": "string",
+                    "description": "Note for this vital"
+                },
+                "recorded_at": {
+                    "type": "string",
+                    "description": "User defined String"
+                },
+                "recorded_time": {
+                    "type": "integer",
+                    "format": "int64",
+                    "description": "Time recorded in milliseconds"
+                }
+            }
+        },
+        "Error": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "fields": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
